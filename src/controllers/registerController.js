@@ -1,5 +1,6 @@
 const User = require('../models/User')
-const { check, validationResult } = require('express-validator')
+const { check, validationResult } = require('express-validator');
+const mongoose= require('mongoose');
 const validationInput = async (req) => {
 
     await check('firstName')
@@ -33,7 +34,7 @@ const validationInput = async (req) => {
     // return validationResult(req);
 }
 module.exports = {
-    async store(req, res) {
+    async createUser(req, res) {
         try {
             await validationInput(req);
             const errors = validationResult(req)
@@ -43,7 +44,20 @@ module.exports = {
             registerUser = User.create(registerUser)
             return res.json(registerUser)
         } catch (error) {
-            throw new Error(`The user is not register because of this error ${error}`)
+            res.status(400).send(`The user is not register because of this error ${error}`)
+          //  throw new Error(`The user is not register because of this error ${error}`)
+        }
+    },
+    async getUser(req, res){
+        try {
+            
+            const id = req.params.userId;
+            if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Not valid id');
+            const user = await User.findById(id)
+            if(!user) return  res.status(404).send('Not exist');
+            res.send(user)
+        } catch (error) {
+            res.status(400).send(`The user is not register because of this error ${error}`)
         }
     }
 }

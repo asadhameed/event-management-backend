@@ -1,8 +1,6 @@
-const { exists } = require('../models/User');
-
-module.exports = ()=>{
+module.exports = function(){
     if (process.env.NODE_ENV !== 'production') {
-        const dotenv = require('dotenv').config();
+        require('dotenv').config();
     }
     process.on('uncaughtException', (ex)=>{
         console.log("UncaughtException ", ex)

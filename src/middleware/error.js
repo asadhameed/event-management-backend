@@ -1,5 +1,3 @@
-const { exists } = require("../models/User");
-
 module.exports=(err, req, res ,next)=>{
 
     console.log(err);

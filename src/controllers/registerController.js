@@ -52,8 +52,8 @@ module.exports = {
     async getUser(req, res){
         try {
             
-            const id = req.params.userId;
-            if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Not valid id');
+            const id = req.params.id;
+            if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Not valid id');
             const user = await User.findById(id)
             if(!user) return  res.status(404).send('Not exist');
             res.send(user)

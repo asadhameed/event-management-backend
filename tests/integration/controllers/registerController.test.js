@@ -97,7 +97,7 @@ describe('RegisterController', () => {
         it('should return 404 if invalid user ID ', async () => {
             userId = 1;
             const res = await exec();
-            expect(res.status).toBe(404)
+            expect(res.status).toBe(400)
         })
         it('should return 404 if user do not exist', async () => {
 

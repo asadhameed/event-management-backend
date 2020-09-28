@@ -39,5 +39,12 @@ module.exports = {
         })
         event = await event.save();
         res.send(event)
-    }
+    },
+   async getEventById(req, res){
+       const id =req.params.id;
+       if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
+        const event = await Event.findById(id)
+        if(!event) return res.status(404).send('not found')
+       res.send(event)
+   }
 }

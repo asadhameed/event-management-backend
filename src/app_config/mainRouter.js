@@ -10,9 +10,10 @@ module.exports = (app) => {
     app.use(express.json())
   
     app.post('/user/registration', registerController.createUser)
-    app.get('/user/:userId', registerController.getUser)
+    app.get('/user/:id', registerController.getUser)
 
     app.post('/event',upload.single('thumbnail'),event.createEven)
+    app.get('/event/:id', event.getEventById)
 
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))
     app.use(error)

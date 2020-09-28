@@ -3,13 +3,15 @@ const request = require('supertest');
 const path = require('path')
 const fs = require('fs')
 const User = require('../../../src/models/User')
+const Event = require('../../../src/models/event')
 let server;
 describe('Event Controller', () => {
     beforeEach(() => {
         server = require('../../../src/server');
     })
-    afterEach(() => {
-        server.close();
+    afterEach( async() => {
+        await server.close();
+        await Event.deleteMany({});
     })
     describe('Post Method', () => {
         let title;
@@ -85,8 +87,34 @@ describe('Event Controller', () => {
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user']))
             const filepath = './src/images/'+ res.body.thumbnail;
-           
             await fs.unlinkSync(filepath)
+        })
+    })
+    describe('Get Method', ()=>{
+        let eventId;
+        const exec=()=>{
+            return request(server).get('/event/'+eventId)
+        }
+        it('Should return 400 if invalid event id', async ()=>{
+            eventId=1;
+            const res = await exec();
+            expect(res.status).toBe(400)
+        })
+        it('Should return 404 if event do not exist', async()=>{
+            eventId= mongoose.Types.ObjectId();
+            const res = await exec();
+            expect(res.status).toBe(404)
+        })
+        it('Should return 200 and event', async()=>{
+            const event = new Event({
+              title:'Event',
+              description:'This is event'  
+            })
+            await event.save();
+            eventId= event._id;
+            const res = await exec();
+            expect(res.status).toBe(200)
+            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description']))
         })
     })
 })

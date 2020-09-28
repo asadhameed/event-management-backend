@@ -84,6 +84,8 @@ describe('RegisterController', () => {
         it('should return 200 If First name, Last name, Email and Password are valid', async () => {
             const res = await exec();
             expect(res.status).toBe(200)
+            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['firstName','lastName', 'password', 'email']))
+       
         })
     })
 

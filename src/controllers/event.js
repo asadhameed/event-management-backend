@@ -1,5 +1,7 @@
-const { check, validationResult } = require("express-validator")
-
+const { check, validationResult } = require("express-validator");
+const mongoose = require("mongoose");
+const Event = require('../models/event');
+const User = require("../models/User");
 module.exports = {
     async createEven(req, res) {
         await check('title')
@@ -10,14 +12,30 @@ module.exports = {
             .notEmpty()
             .withMessage('Please give the description')
             .run(req);
-
-            await check('price')
+        await check('price')
             .isNumeric()
-            .isInt({min:1})
+            .isInt({ min: 1 })
             .withMessage('Price should greater then zero').run(req);
+        await check('user_id').custom(async (id) => {
+            if (!mongoose.Types.ObjectId.isValid(id))
+                throw new Error('User id is not valid');
+            // const user = await Event.find({user:value})
+            const user = await User.findById(id)
+            if (!user)
+                throw new Error('User is not exist')
+            return true;
+        }).run(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors);
-
-        res.send('Create event')
+        const { title, description, price } = req.body;
+        const user = req.headers.user_id;
+        let event = new Event({
+            title,
+            description,
+            price,
+            user
+        })
+        event = await event.save();
+        res.send(event)
     }
 }

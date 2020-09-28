@@ -41,8 +41,9 @@ module.exports = {
 
             if (!errors.isEmpty()) return res.status(400).send(errors)
             let registerUser = req.body;
-            registerUser = User.create(registerUser)
-            return res.json(registerUser)
+            registerUser = await User.create(registerUser)
+            //registerUser.json();
+            return res.send(registerUser)
         } catch (error) {
             res.status(400).send(`The user is not register because of this error ${error}`)
           //  throw new Error(`The user is not register because of this error ${error}`)

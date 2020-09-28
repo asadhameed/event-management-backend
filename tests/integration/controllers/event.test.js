@@ -12,23 +12,46 @@ describe('Event Controller', () => {
     afterEach(async () => {
         await server.close();
         await Event.deleteMany({});
+        const imagesFolder = './src/images/';
+        const files = await fs.promises.readdir(imagesFolder)
+        files.forEach( async file=>  await fs.unlinkSync(imagesFolder+file))
     })
     describe('Post Method', () => {
         let title;
         let description;
         let price;
         let user_id;
-        beforeEach(() => {
+        let eventType;
+        let thumbnail;
+
+        beforeEach(async () => {
+            const user = new User(
+                {
+                    firstName: 'aaa',
+                    lastName: 'bbb',
+                    email: 'test@test.com',
+                    password: '1234567'
+                })
+            await user.save();
+            user_id = user._id;
             title = 'Event Title';
             description = 'Event Description';
             price = 10;
-            user_id = mongoose.Types.ObjectId()
-
+            eventType = 'type'
+            thumbnail = 'thumbnail'
         })
 
         const exec = () => {
             return request(server)
-                .post('/events').set('user_id', user_id).send({ title, description, price });
+                .post('/event')
+                .set('user_id', user_id)
+                .attach(thumbnail, path.resolve(__dirname, 'test.png'))
+                .field('title', title)
+                .field('description', description)
+                .field('eventType', eventType)
+                .field('price', price);
+            // request(server)
+            //   .post('/event').set('user_id', user_id).send({ title, description, price });
         }
         it('should return 400 If Title is less then 4 characters', async () => {
             title = 'aaa'
@@ -47,6 +70,12 @@ describe('Event Controller', () => {
             expect(res.status).toBe(400)
         })
 
+        it('should return 400 if the Even Type is not provide', async () => {
+            eventType = '';
+            const res = await exec();
+            expect(res.status).toBe(400)
+        })
+
         it('should return 400 if price is less then zero', async () => {
             price = 0;
             const res = await exec();
@@ -61,39 +90,22 @@ describe('Event Controller', () => {
         })
 
         it('should return 400 if user is not exist', async () => {
+            user_id = mongoose.Types.ObjectId()
             const res = await exec();
             expect(res.status).toBe(400)
         })
 
         it('should return 200 if valid input', async () => {
-
-            const user = new User(
-                {
-                    firstName: 'aaa',
-                    lastName: 'bbb',
-                    email: 'test@test.com',
-                    password: '1234567'
-                })
-            await user.save();
-            user_id = user._id;
-            let thumbnail = 'thumbnail'
-            const res = await request(server)
-                .post('/events')
-                .set('user_id', user_id)
-                .attach(thumbnail, path.resolve(__dirname, 'test.png'))
-                .field('title', title)
-                .field('description', description)
-                .field('price', price);
+            const res = await exec()
+            console.log(res.body)
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user']))
-            const filepath = './src/images/' + res.body.thumbnail;
-            await fs.unlinkSync(filepath)
         })
     })
     describe('Get Method', () => {
         let eventId;
         const exec = () => {
-            return request(server).get('/events/' + eventId)
+            return request(server).get('/event/' + eventId)
         }
         it('Should return 400 if invalid event id', async () => {
             eventId = 1;

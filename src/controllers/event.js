@@ -12,6 +12,10 @@ module.exports = {
             .notEmpty()
             .withMessage('Please give the description')
             .run(req);
+        await check('eventType')
+            .notEmpty()
+            .withMessage('Enter the event type')
+            .run(req)
         await check('price')
             .isNumeric()
             .isInt({ min: 1 })
@@ -29,7 +33,7 @@ module.exports = {
         if (!errors.isEmpty()) return res.status(400).send(errors);
         const { title, description, price } = req.body;
         const user = req.headers.user_id;
-        const thumbnail=req.file.filename;
+        const thumbnail = req.file.filename;
         let event = new Event({
             title,
             description,
@@ -40,15 +44,16 @@ module.exports = {
         event = await event.save();
         res.send(event)
     },
-   async getEventById(req, res){
-       const id =req.params.id;
-       if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
+    async getEventById(req, res) {
+        const id = req.params.id;
+        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
         const event = await Event.findById(id)
-        if(!event) return res.status(404).send('not found')
-       res.send(event)
-   },
-   async getEvents(req, res){
-       const events = await Event.find();
-       res.send(events)
-   }
+        if (!event) return res.status(404).send('not found')
+        res.send(event)
+    },
+    async getAllEvents(req, res) {
+        const query = req.params.sport || {}
+        const events = await Event.find();
+        res.send(events)
+    }
 }

@@ -4,6 +4,7 @@ const eventSchema = new mongoose.Schema({
     description:String,
     price:Number,
     thumbnail:String,
+    eventType:String,
     date:{type:Date, default:Date.now},
     user:{
         type:mongoose.Types.ObjectId,

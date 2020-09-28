@@ -29,11 +29,13 @@ module.exports = {
         if (!errors.isEmpty()) return res.status(400).send(errors);
         const { title, description, price } = req.body;
         const user = req.headers.user_id;
+        const thumbnail=req.file.filename;
         let event = new Event({
             title,
             description,
             price,
-            user
+            user,
+            thumbnail
         })
         event = await event.save();
         res.send(event)

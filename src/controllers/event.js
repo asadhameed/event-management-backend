@@ -46,5 +46,9 @@ module.exports = {
         const event = await Event.findById(id)
         if(!event) return res.status(404).send('not found')
        res.send(event)
+   },
+   async getEvents(req, res){
+       const events = await Event.find();
+       res.send(events)
    }
 }

@@ -14,8 +14,38 @@ describe('Event Controller', () => {
         await Event.deleteMany({});
         const imagesFolder = './src/images/';
         const files = await fs.promises.readdir(imagesFolder)
-        files.forEach( async file=>  await fs.unlinkSync(imagesFolder+file))
+        files.forEach(async file => await fs.unlinkSync(imagesFolder + file))
     })
+    const insertOneEvent = async () => {
+        return await new Event({
+            title: 'Event 1',
+            description: 'this is event 1 of  running',
+            eventType: 'running'
+        }).save()
+
+
+    }
+
+    const insertManyEvents = () => {
+        Event.insertMany([
+            {
+                title: 'Event 1',
+                description: 'this is event 1 of  running',
+                eventType: 'running'
+            },
+            {
+                title: 'Event 2',
+                description: 'this is event 2 of running',
+                eventType: 'running'
+            },
+            {
+                title: 'Event 3',
+                description: 'this is event 3 of walking',
+                eventType: 'walking'
+            },
+        ])
+
+    }
     describe('Post Method', () => {
         let title;
         let description;
@@ -50,8 +80,6 @@ describe('Event Controller', () => {
                 .field('description', description)
                 .field('eventType', eventType)
                 .field('price', price);
-            // request(server)
-            //   .post('/event').set('user_id', user_id).send({ title, description, price });
         }
         it('should return 400 If Title is less then 4 characters', async () => {
             title = 'aaa'
@@ -97,12 +125,11 @@ describe('Event Controller', () => {
 
         it('should return 200 if valid input', async () => {
             const res = await exec()
-            console.log(res.body)
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user']))
         })
     })
-    describe('Get Method', () => {
+    describe('Get Event by id', () => {
         let eventId;
         const exec = () => {
             return request(server).get('/event/' + eventId)
@@ -118,36 +145,72 @@ describe('Event Controller', () => {
             expect(res.status).toBe(404)
         })
         it('Should return 200 and event', async () => {
-            const event = new Event({
-                title: 'Event',
-                description: 'This is event'
-            })
-            await event.save();
+           const event = await insertOneEvent()
             eventId = event._id;
             const res = await exec();
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description']))
+            
         })
-        it('Should return 200 and empty events if there is no event in database', async () => {
+    })
+    describe('Get All events', () => {
+        it('Should return 200 and empty body if there is no event in database', async () => {
             const res = await request(server).get('/events');
             expect(res.status).toBe(200);
             expect(res.body.length).toBe(0)
         })
 
-        it('Should return 200 and empty events if there is no event in database', async () => {
-            await Event.insertMany([
-                {
-                    title: 'Event 1',
-                    description: 'This is event 1'
-                },
-                {
-                    title: 'Event 2',
-                    description: 'This is event 2'
-                }
-            ])
+        it('Should return 200 and events if there is events in  the database', async () => {
+          
+            await insertManyEvents();
             const res = await request(server).get('/events');
             expect(res.status).toBe(200);
-            expect(res.body.length).toBe(2)
+            expect(res.body.length).toBe(3)
+         
+            //expect(Object.keys(res.body[0])).toEqual(expect.arrayContaining(['title', 'description']))
+        })
+    })
+    describe('Get Events by Type', () => {
+
+        it('Should return 200 and empty body if there is no event the in database', async () => {
+            const res = await request(server).get('/events/running');
+            expect(res.status).toBe(200);
+            expect(res.body.length).toBe(0)
+        })
+
+        it('should return 200 and events if there is specific type of events in database', async () => {
+            // come here
+            await insertManyEvents()
+            const res = await request(server).get('/events/running');
+            // because there is 2 running events
+            expect(res.status).toBe(200);
+            expect(res.body.length).toBe(2);
+            
+            // expect(Object.keys(res.body[0])).toEqual(expect.arrayContaining(['title', 'description', 'evenType']))
+        })
+    })
+    describe('Delete the event', () => {
+        let eventId;
+        const exec = () => {
+            return request(server).del('/event/' + eventId)
+        }
+        it('should return 400 if invalid event id', async () => {
+            eventId = 1;
+            const res = await exec();
+            expect(res.status).toBe(400)
+        })
+        it('should return 404 if event is not found', async () => {
+            eventId = mongoose.Types.ObjectId();
+            const res = await exec();
+            expect(res.status).toBe(404)
+        })
+        it('should return 200 and delete the event. The event should send back to customer', async () => {
+            const event =  insertOneEvent();
+            eventId= (await event)._id;
+            const res = await exec();
+            expect(res.status).toBe(200)
+            expect(res.body).toMatchObject(event)
+          //  expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'evenType']))
         })
     })
 })

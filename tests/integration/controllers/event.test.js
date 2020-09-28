@@ -126,7 +126,7 @@ describe('Event Controller', () => {
         it('should return 200 if valid input', async () => {
             const res = await exec()
             expect(res.status).toBe(200)
-            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user']))
+            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user', 'eventType']))
         })
     })
     describe('Get Event by id', () => {
@@ -145,12 +145,12 @@ describe('Event Controller', () => {
             expect(res.status).toBe(404)
         })
         it('Should return 200 and event', async () => {
-           const event = await insertOneEvent()
+            const event = await insertOneEvent()
             eventId = event._id;
             const res = await exec();
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description']))
-            
+
         })
     })
     describe('Get All events', () => {
@@ -161,13 +161,21 @@ describe('Event Controller', () => {
         })
 
         it('Should return 200 and events if there is events in  the database', async () => {
-          
+
             await insertManyEvents();
             const res = await request(server).get('/events');
             expect(res.status).toBe(200);
             expect(res.body.length).toBe(3)
-         
-            //expect(Object.keys(res.body[0])).toEqual(expect.arrayContaining(['title', 'description']))
+            //expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user','eventType']))
+            expect(res.body).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({   
+                        title: 'Event 1',
+                        description: 'this is event 1 of  running',
+                        eventType: 'running'
+                    })
+                ])
+            );
         })
     })
     describe('Get Events by Type', () => {
@@ -185,7 +193,16 @@ describe('Event Controller', () => {
             // because there is 2 running events
             expect(res.status).toBe(200);
             expect(res.body.length).toBe(2);
-            
+            expect(res.body).toEqual(
+                expect.arrayContaining([
+                    expect.objectContaining({   
+                        title: 'Event 1',
+                        description: 'this is event 1 of  running',
+                        eventType: 'running'
+                    })
+                ])
+            );
+
             // expect(Object.keys(res.body[0])).toEqual(expect.arrayContaining(['title', 'description', 'evenType']))
         })
     })
@@ -205,12 +222,12 @@ describe('Event Controller', () => {
             expect(res.status).toBe(404)
         })
         it('should return 200 and delete the event. The event should send back to customer', async () => {
-            const event =  insertOneEvent();
-            eventId= (await event)._id;
+            const event = insertOneEvent();
+            eventId = (await event)._id;
             const res = await exec();
             expect(res.status).toBe(200)
             expect(res.body).toMatchObject(event)
-          //  expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'evenType']))
+            //  expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'evenType']))
         })
     })
 })

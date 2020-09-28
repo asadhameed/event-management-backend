@@ -31,7 +31,7 @@ module.exports = {
         }).run(req)
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors);
-        const { title, description, price } = req.body;
+        const { title, description, price,eventType } = req.body;
         const user = req.headers.user_id;
         const thumbnail = req.file.filename;
         let event = new Event({
@@ -39,7 +39,8 @@ module.exports = {
             description,
             price,
             user,
-            thumbnail
+            thumbnail,
+            eventType
         })
         event = await event.save();
         res.send(event)
@@ -53,14 +54,17 @@ module.exports = {
     },
     async getAllEvents(req, res) {
        
-        const events = await Event.find();
+       // const {eventType} = req.params;
+       // const query = eventType ? { eventType } : {}
+       const query = req.params
+        const events = await Event.find(query);
         res.send(events)
     },
-    async getEventsType(req , res){
-        const eventType = req.params.eventType || {}
-        const events = await Event.find({eventType});
-        res.send(events)
-    },
+    // async getEventsType(req , res){
+    //     const eventType = req.params.eventType || {}
+    //     const events = await Event.find({eventType});
+    //     res.send(events)
+    // },
     async deletedEvent(req, res){
         const id = req.params.id;
         if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid Event id')

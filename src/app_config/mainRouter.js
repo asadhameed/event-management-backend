@@ -14,8 +14,8 @@ module.exports = (app) => {
 
     app.post('/event',upload.single('thumbnail'),event.createEven)
     app.get('/event/:id', event.getEventById)
-    app.get('/events/', event.getAllEvents)
-    app.get('/events/:eventType' , event.getEventsType)
+    app.get('/events', event.getAllEvents)
+    app.get('/events/:eventType' , event.getAllEvents)
     app.delete('/event/:id', event.deletedEvent)
 
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))

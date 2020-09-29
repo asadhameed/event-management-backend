@@ -7,12 +7,13 @@ const event= require('../controllers/event')
 const eventDashBoard= require('../controllers/eventDashBoard')
 const error=require('../middleware/error');
 const idValidation= require('../middleware/objectIdvalidation')
+const login = require('../controllers/login')
 
 const uploadConfig=require('../middleware/upload');
 const upload = multer(uploadConfig)
 module.exports = (app) => {
     app.use(express.json())
-  
+    app.get('/user/login', login.userLogin)
     app.post('/user/registration', registerController.createUser)
     app.get('/user/:id',idValidation, registerController.getUser)
 

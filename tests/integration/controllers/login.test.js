@@ -4,16 +4,16 @@ let server;
 
 describe('Login Controller', () => {
     const registerUser = async () => {
-        await new User(
+        email = 'test@test.com';
+        password = '1234567';
+       await new User(
             {
                 firstName: 'aaa',
                 lastName: 'bbb',
-                email: 'test@test.com',
-                password: '1234567'
-            }).save();
-        email = 'test@test.com';
-        password = '1234567';
+                email,
+                password : await User.createPassword(password)
 
+            }).save();
     }
     beforeEach(async () => {
         server = require('../../../src/server');
@@ -23,6 +23,7 @@ describe('Login Controller', () => {
     let password;
     afterEach(async () => {
         await server.close();
+        await User.deleteMany({})
     })
     const exec = () => {
         return request(server).get('/user/login').send({ password, email });
@@ -33,25 +34,24 @@ describe('Login Controller', () => {
         expect(res.status).toBe(400)
     })
 
-    it('should return 400 if password is not provide', async()=>{
-        password=''
+    it('should return 400 if password is not provide', async () => {
+        password = ''
         const res = await exec();
         expect(res.status).toBe(400)
     })
-    it('should return 401 if email is not exist', async()=>{
-        email="test1@test.com"
+    it('should return 401 if email is not exist', async () => {
+        email = "test1@test.com"
         const res = await exec();
         expect(res.status).toBe(401)
     })
-    it('should return 401 if password is wrong', async()=>{
-         password='123456';
-         const res = await exec();
-         expect(res.status).toBe(401)
+    it('should return 401 if password is wrong', async () => {
+        password = '123456';
+        const res = await exec();
+        expect(res.status).toBe(401)
     })
 
-    it('should return 200 when user successful', async()=>{
-     //   password='123456';
+    it('should return 200 when user successful', async () => {
         const res = await exec();
-        expect(res.status).toBe(401)
-   })
+        expect(res.status).toBe(200)
+    })
 })

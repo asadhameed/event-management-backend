@@ -18,7 +18,8 @@ module.exports = {
         const { email, password} =req.body;
         const user = await User.findOne({email})
         if(!user) return res.status(401).send('Invalid email or password')
-        if(User.passwordCompare(password, user.password)) return res.status(401).send('Invalid email or password')
+        const isAuthUser = await User.passwordCompare(password, user.password)
+        if(!isAuthUser) return res.status(401).send('Invalid email or password')
         res.send('login')
     }
 }

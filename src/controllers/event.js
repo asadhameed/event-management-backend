@@ -47,7 +47,7 @@ module.exports = {
     },
     async getEventById(req, res) {
         const id = req.params.id;
-        if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
+       // if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
         const event = await Event.findById(id)
         if (!event) return res.status(404).send('not found')
         res.send(event)
@@ -67,7 +67,7 @@ module.exports = {
     // },
     async deletedEvent(req, res){
         const id = req.params.id;
-        if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid Event id')
+       // if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid Event id')
         const event = await Event.findByIdAndDelete(id)
         if(!event) return res.status(404).send('Event is not found')
         res.send(event)

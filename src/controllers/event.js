@@ -45,31 +45,11 @@ module.exports = {
         event = await event.save();
         res.send(event)
     },
-    async getEventById(req, res) {
-        const id = req.params.id;
-       // if (!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send("Invalid event id")
-        const event = await Event.findById(id)
-        if (!event) return res.status(404).send('not found')
-        res.send(event)
-    },
-    async getAllEvents(req, res) {
-       
-       // const {eventType} = req.params;
-       // const query = eventType ? { eventType } : {}
-       const query = req.params
-        const events = await Event.find(query);
-        res.send(events)
-    },
-    // async getEventsType(req , res){
-    //     const eventType = req.params.eventType || {}
-    //     const events = await Event.find({eventType});
-    //     res.send(events)
-    // },
+
     async deletedEvent(req, res){
         const id = req.params.id;
-       // if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Invalid Event id')
         const event = await Event.findByIdAndDelete(id)
         if(!event) return res.status(404).send('Event is not found')
-        res.send(event)
+        res.status(204).send('');
     }
 }

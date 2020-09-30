@@ -116,16 +116,17 @@ describe('Event Register controller', () => {
             expect(res.status).toBe(200)
         })
     })
-    describe('Post method for Approved ', ()=>{
+
+    const eventRegisterApprovedOrRejected=(url,status)=>{
         let eventRegisterId;
         let approved;
         beforeEach(async () => {
             const eventRegister =await createEventRegister();
             eventRegisterId = eventRegister._id;
-            approved = true;
+            approved = status;
         })
         const exec = () => {
-            return request(server).post('/eventRegister/approved/' + eventRegisterId).send({approved});
+            return request(server).post( url + eventRegisterId).send({approved});
         } 
         it('should return 400 if eventRegister filed approved is not provided', async ()=>{
             approved='tre'
@@ -133,8 +134,8 @@ describe('Event Register controller', () => {
             expect(res.status).toBe(400)
         })
 
-        it('should return 400 if eventRegister filed approved is false', async ()=>{
-            approved=false
+        it(`should return 400 if eventRegister field  approved is  ${!status}`, async ()=>{
+            approved=!status
             const res = await exec();
             expect(res.status).toBe(400)
         })
@@ -146,7 +147,22 @@ describe('Event Register controller', () => {
         it('Should return 404 if eventRegister is not found ', async()=>{
             eventRegisterId=mongoose.Types.ObjectId();
             const res = await exec();
+            console.log(res)
             expect(res.status).toBe(404)
         })
+
+        it('Should return 200 and eventRegister information if input is valid', async()=>{
+            const res = await exec();
+            console.log(res.body)
+            expect(res.body).toHaveProperty('approved', approved)
+            expect(res.status).toBe(200)
+            
+        })
+    }
+    describe('Post method for Approved ', ()=>{
+        eventRegisterApprovedOrRejected('/eventRegister/approved/',true)
+    })
+    describe('Post method for Rejected ', ()=>{
+        eventRegisterApprovedOrRejected('/eventRegister/rejected/',false)
     })
 })

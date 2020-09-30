@@ -29,8 +29,8 @@ describe('Event Register controller', () => {
             eventType: 'running'
         }).save();
     }
-    
-    const createEventRegister= async()=>{
+
+    const createEventRegister = async () => {
         const user = await createUser();
         const event = await createEvent();
         return new EventRegister({
@@ -93,7 +93,7 @@ describe('Event Register controller', () => {
     describe('Get Method', () => {
         let eventRegisterId;
         beforeEach(async () => {
-            const eventRegister =await createEventRegister();
+            const eventRegister = await createEventRegister();
             eventRegisterId = eventRegister._id;
         })
         const exec = () => {
@@ -117,52 +117,52 @@ describe('Event Register controller', () => {
         })
     })
 
-    const eventRegisterApprovedOrRejected=(url,status)=>{
+   
+    describe('Post method for Approval ', () => {
+
         let eventRegisterId;
         let approved;
         beforeEach(async () => {
-            const eventRegister =await createEventRegister();
+            const eventRegister = await createEventRegister();
             eventRegisterId = eventRegister._id;
-            approved = status;
+            approved = true;
         })
         const exec = () => {
-            return request(server).post( url + eventRegisterId).send({approved});
-        } 
-        it('should return 400 if eventRegister filed approved is not provided', async ()=>{
-            approved='tre'
+            return request(server).post('/eventRegister/approval/' + eventRegisterId).send({ approved });
+        }
+        it('should return 400 if eventRegister filed approved is not provided', async () => {
+            approved = 'tre'
             const res = await exec();
-            expect(res.status).toBe(400)
+            expect(res.status).toBe(400);
         })
 
-        it(`should return 400 if eventRegister field  approved is  ${!status}`, async ()=>{
-            approved=!status
+        it('Should return 400 if eventRegister is invalid ', async () => {
+            eventRegisterId = 1;
             const res = await exec();
-            expect(res.status).toBe(400)
+            expect(res.status).toBe(400);
         })
-        it('Should return 400 if eventRegister is invalid ', async()=>{
-            eventRegisterId=1;
+        it('Should return 404 if eventRegister is not found ', async () => {
+            eventRegisterId = mongoose.Types.ObjectId();
             const res = await exec();
-            expect(res.status).toBe(400)
-        })
-        it('Should return 404 if eventRegister is not found ', async()=>{
-            eventRegisterId=mongoose.Types.ObjectId();
-            const res = await exec();
-            console.log(res)
-            expect(res.status).toBe(404)
+            expect(res.status).toBe(404);
         })
 
-        it('Should return 200 and eventRegister information if input is valid', async()=>{
+        it('Should return 200 and eventRegister information if input is valid and approved', async () => {
             const res = await exec();
-            console.log(res.body)
-            expect(res.body).toHaveProperty('approved', approved)
-            expect(res.status).toBe(200)
-            
+            expect(res.body).toHaveProperty('approved', true)
+            expect(res.status).toBe(200);
+
         })
-    }
-    describe('Post method for Approved ', ()=>{
-        eventRegisterApprovedOrRejected('/eventRegister/approved/',true)
+        it('Should return 200 and eventRegister information if input is valid and rejected', async () => {
+            approved = false;
+            const res = await exec();
+            expect(res.body).toHaveProperty('approved', false)
+            expect(res.status).toBe(200);
+
+        })
+        // eventRegisterApprovedOrRejected('/eventRegister/approved/',true)
     })
-    describe('Post method for Rejected ', ()=>{
-        eventRegisterApprovedOrRejected('/eventRegister/rejected/',false)
-    })
+    // describe('Post method for Rejected ', ()=>{
+    //     eventRegisterApprovedOrRejected('/eventRegister/rejected/',false)
+    // })
 })

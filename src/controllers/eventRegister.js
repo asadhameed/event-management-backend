@@ -55,12 +55,13 @@ module.exports = {
         if (!event) return res.status(404).send('Record is not found')
         res.send(event)
     },
-    async approved(req, res) {
-        await check('approved').isBoolean()
-            .custom((value) => {
-                if (!value) throw new Error("Bad parameter")
-                return true;
-            }).run(req);
+    async approval(req, res) {
+        // await check('approved').isBoolean()
+        //     .custom((value) => {
+        //         if (!value) throw new Error("Bad parameter")
+        //         return true;
+        //     }).run(req);
+        await check('approved').isBoolean().withMessage('Wrong approved status').run(req);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors)
         
@@ -72,21 +73,21 @@ module.exports = {
         event = await event.save();
         res.send(event)
     },
-    async rejected(req, res) {
-        await check('approved').isBoolean()
-            .custom((value) => {
-                if (value) throw new Error("Bad parameter")
-                return true;
-            }).run(req);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).send(errors)
+    // async rejected(req, res) {
+    //     await check('approved').isBoolean()
+    //         .custom((value) => {
+    //             if (value) throw new Error("Bad parameter")
+    //             return true;
+    //         }).run(req);
+    //     const errors = validationResult(req);
+    //     if (!errors.isEmpty()) return res.status(400).send(errors)
         
-        const id = req.params.id;
-        let event = await EventRegister.findById(id);
-        if (!event) return res.status(404).send('Record is not found')
+    //     const id = req.params.id;
+    //     let event = await EventRegister.findById(id);
+    //     if (!event) return res.status(404).send('Record is not found')
         
-        event.approved = req.body.approved;
-        event = await event.save();
-        res.send(event)
-    }
+    //     event.approved = req.body.approved;
+    //     event = await event.save();
+    //     res.send(event)
+    // }
 }

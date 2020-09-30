@@ -27,8 +27,8 @@ module.exports = (app) => {
 
     app.post('/eventRegister/:id',[paramsId,headerUserId],eventRegister.create)
     app.get('/eventRegister/:id',paramsId,eventRegister.getEventRegister)
-    app.post('/eventRegister/approved/:id', paramsId, eventRegister.approved)
-    app.post('/eventRegister/rejected/:id', paramsId, eventRegister.rejected)
+    app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval)
+    //app.post('/eventRegister/rejected/:id', paramsId, eventRegister.rejected)
 
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))
     app.use(error)

@@ -3,13 +3,13 @@ const mongoose = require('mongoose');
 const eventRegisterSchema = new mongoose.Schema({
     date: String,
     approved: { type: Boolean, default: false },
-    User: {
+    user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    Event: {
+    event: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Events'
+        ref: 'Event'
     }
 })
 

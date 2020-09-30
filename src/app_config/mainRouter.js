@@ -26,8 +26,8 @@ module.exports = (app) => {
     app.delete('/event/:id',paramsId, event.deletedEvent)
 
     app.post('/eventRegister/:id',[paramsId,headerUserId],eventRegister.create)
-    app.get('/eventRegister/:id',eventRegister.get)
-
+    app.get('/eventRegister/:id',paramsId,eventRegister.getEventRegister)
+    app.post('/eventRegister/approved/:id', paramsId, eventRegister.approved)
 
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))
     app.use(error)

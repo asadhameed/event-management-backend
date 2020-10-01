@@ -1,6 +1,7 @@
 const express = require('express')
 const path = require('path')
 const multer = require('multer')
+const cors=require('cors')
 
 const registerController = require('../controllers/registerController')
 const event= require('../controllers/event')
@@ -13,8 +14,9 @@ const eventRegister= require('../controllers/eventRegister')
 const uploadConfig=require('../middleware/upload');
 const upload = multer(uploadConfig)
 module.exports = (app) => {
+   app.use(cors());
     app.use(express.json())
-    app.get('/user/login', login.userLogin)
+    app.post('/user/login', login.userLogin)
     app.post('/user/registration', registerController.createUser)
     app.get('/user/:id',paramsId, registerController.getUser)
 

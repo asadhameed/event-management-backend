@@ -20,6 +20,6 @@ module.exports = {
         if(!user) return res.status(401).send('Invalid email or password')
         const isAuthUser = await User.passwordCompare(password, user.password)
         if(!isAuthUser) return res.status(401).send('Invalid email or password')
-        res.send('login')
+        res.send({user:user._id})
     }
 }

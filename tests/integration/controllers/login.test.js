@@ -26,7 +26,7 @@ describe('Login Controller', () => {
         await User.deleteMany({})
     })
     const exec = () => {
-        return request(server).get('/user/login').send({ password, email });
+        return request(server).post('/user/login').send({ password, email });
     }
     it('Should return 400 if user invalid email', async () => {
         email = 'test'

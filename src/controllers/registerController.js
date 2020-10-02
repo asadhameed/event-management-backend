@@ -43,7 +43,12 @@ module.exports = {
             let registerUser = req.body;
             registerUser.password= await User.createPassword(registerUser.password)
             registerUser = await User.create(registerUser)
-            return res.send(registerUser)
+            return res.send({
+                firstName:registerUser.firstName,
+                lastName:registerUser.lastName,
+                id:registerUser._id,
+                email:registerUser.email
+            })
         } catch (error) {
             res.status(400).send(`The user is not register because of this error ${error}`)
           //  throw new Error(`The user is not register because of this error ${error}`)

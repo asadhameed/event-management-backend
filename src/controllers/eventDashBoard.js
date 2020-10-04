@@ -13,7 +13,7 @@ module.exports={
     },
 
     async getEventsByUserID(req, res){
-        const user_id = req.headers.user_id;
+        const user_id = req.user._id;
         const query = {user:user_id}
         const events = await Event.find(query);
         res.send(events)

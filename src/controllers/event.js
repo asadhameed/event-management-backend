@@ -47,7 +47,7 @@ module.exports = {
 
     async deletedEvent(req, res){
         const eventId = req.params.id;
-        const userId= req.headers.user_id;
+        const userId= req.user._id;;
         let event = await Event.findById(eventId)
         if (!event) return res.status(404).send('Event is not found')
        if(event.user.toString() !== userId)  return res.status(401).send('No authorization');

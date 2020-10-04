@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
 const request = require('supertest');
 const Event = require('../../../src/models/event');
@@ -63,41 +64,67 @@ describe('Event Dash Board Controller', () => {
     //     })
     // })
     describe('Get Events by User id', () => {
-        let user_id;
-        const createEventByUser = async () => {
-            const user = await new User({
+
+        let token;
+        let user;
+         beforeEach (async () => {
+             user = await new User({
                 firstName: 'test1',
                 lastName: 'lastTest',
                 email: 'test@test.com',
                 password: '12345'
             }).save();
-            user_id= user._id;
+            token= await user.generateAuthToken();
+           
             await new Event({
                 title:'Event 1',
                 description:'this is event 1',
                 eventType: 'running',
-                user:user_id
+                user:user._id
             }).save();
-        }
+        })
         const exec = () => {
-            return request(server).get('/event/byuser/').set('user_id', user_id);
+            return request(server).get('/event/byuser/').set('x-auth-token', token);
         }
         
-        it('Should return 400 if invalid user id',async()=>{
-            user_id=1;
-           const res = await exec()
-            expect(res.status).toBe(400)
+        it('Should return 401 if invalid token ',async()=>{
+            token = '';
+             const res = await exec()
+            expect(res.status).toBe(401)
+        })
+        it('should return 400 if wrong token ', async()=>{
+            token = 'myowntokenstring';
+            const res = await exec()
+           expect(res.status).toBe(400)
+        })
+        it('should return 400 if generate fake token ', async()=>{
+            token = jwt.sign({_id:'1',isLogin:false}, "generate_Fake_token")
+            const res = await exec()
+           expect(res.status).toBe(400)
+        })
+
+        it('should return 401 if token valid but not login ', async()=>{
+            token = jwt.sign({_id:'1',isLogin:false}, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+           expect(res.status).toBe(401)
+        })
+
+        
+        it('should return 400 if user._id is invalid ', async()=>{
+            token = jwt.sign({_id:'1',isLogin:true}, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+           expect(res.status).toBe(400)
         })
 
         it('Should return 200 and empty event list if user valid but have not create a event',async()=>{
-            user_id=mongoose.Types.ObjectId();
+            token = jwt.sign({_id:mongoose.Types.ObjectId(),isLogin:true}, process.env.JWT_PRIVATE_KEY)
            const res = await exec()
             expect(res.status).toBe(200);
             expect(res.body.length).toBe(0);
         })
 
         it('Should return 200 and receive events list if user valid and have the events',async()=>{
-            await createEventByUser();
+          //  await createEventByUser();
             const res = await exec()
             expect(res.status).toBe(200)
             expect(res.body.length).toBe(1);

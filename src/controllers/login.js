@@ -15,11 +15,12 @@ module.exports = {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors);
-        const { email, password} =req.body;
-        const user = await User.findOne({email})
-        if(!user) return res.status(401).send('Invalid email or password')
+        const { email, password } = req.body;
+        const user = await User.findOne({ email })
+        if (!user) return res.status(401).send('Invalid email or password')
         const isAuthUser = await User.passwordCompare(password, user.password)
-        if(!isAuthUser) return res.status(401).send('Invalid email or password')
-        res.send({user:user._id})
+        if (!isAuthUser) return res.status(401).send('Invalid email or password')
+        const token = await user.generateAuthToken()
+        res.header('x-auth-token', token).send({ user: user._id })
     }
 }

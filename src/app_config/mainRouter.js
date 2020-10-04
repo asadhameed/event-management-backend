@@ -8,6 +8,7 @@ const event= require('../controllers/event')
 const eventDashBoard= require('../controllers/eventDashBoard')
 const error=require('../middleware/error');
 const {paramsId,headerUserId}= require('../middleware/objectIdvalidation')
+const {userAuth,isLogin,headerID}= require('../../src/middleware/auth')
 const login = require('../controllers/login')
 const eventRegister= require('../controllers/eventRegister')
 
@@ -19,20 +20,19 @@ module.exports = (app) => {
     app.post('/user/login', login.userLogin)
     app.post('/user/registration', registerController.createUser)
     app.get('/user/:id',paramsId, registerController.getUser)
-    app.get('/user/events' , headerUserId ,eventDashBoard.getEventsByUserID )
+    
 
-   // app.get('/event/:id',paramsId, eventDashBoard.getEventById)
     app.get('/events', eventDashBoard.getAllEvents)
     app.get('/events/:eventType' , eventDashBoard.getAllEvents)
-    app.get('/event/byuser/',headerUserId , eventDashBoard.getEventsByUserID )
+    app.get('/event/byuser/',[userAuth, isLogin,headerID]  , eventDashBoard.getEventsByUserID )
 
     app.post('/event',upload.single('thumbnail'),event.createEven)
-    app.delete('/event/:id',[paramsId,headerUserId], event.deletedEvent)
+    app.delete('/event/:id',[userAuth, isLogin,headerID,paramsId], event.deletedEvent)
 
     app.post('/eventRegister/:id',[paramsId,headerUserId],eventRegister.create)
     app.get('/eventRegister/:id',paramsId,eventRegister.getEventRegister)
     app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval)
-    //app.post('/eventRegister/rejected/:id', paramsId, eventRegister.rejected)
+
     
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))
     app.use(error)

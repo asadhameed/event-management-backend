@@ -23,7 +23,6 @@ module.exports = {
         await check('user_id').custom(async (id) => {
             if (!mongoose.Types.ObjectId.isValid(id))
                 throw new Error('User id is not valid');
-            // const user = await Event.find({user:value})
             const user = await User.findById(id)
             if (!user)
                 throw new Error('User is not exist')
@@ -47,8 +46,12 @@ module.exports = {
     },
 
     async deletedEvent(req, res){
-        const id = req.params.id;
-        const event = await Event.findByIdAndDelete(id)
+        const eventId = req.params.id;
+        const userId= req.headers.user_id;
+        let event = await Event.findById(eventId)
+        if (!event) return res.status(404).send('Event is not found')
+       if(event.user.toString() !== userId)  return res.status(401).send('No authorization');
+         event = await Event.findByIdAndDelete(eventId)
         if(!event) return res.status(404).send('Event is not found')
         res.status(204).send('');
     }

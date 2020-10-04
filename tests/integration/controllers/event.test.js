@@ -16,7 +16,16 @@ describe('Event Controller', () => {
         const files = await fs.promises.readdir(imagesFolder)
         files.forEach(async file => await fs.unlinkSync(imagesFolder + file))
     })
+    const createUser=()=>{
 
+       return new User(
+            {
+                firstName: 'aaa',
+                lastName: 'bbb',
+                email: 'test@test.com',
+                password: '1234567'
+            }).save()
+    }
     describe('Post Method', () => {
         let title;
         let description;
@@ -26,14 +35,7 @@ describe('Event Controller', () => {
         let thumbnail;
 
         beforeEach(async () => {
-            const user = new User(
-                {
-                    firstName: 'aaa',
-                    lastName: 'bbb',
-                    email: 'test@test.com',
-                    password: '1234567'
-                })
-            await user.save();
+            const user = await createUser();
             user_id = user._id;
             title = 'Event Title';
             description = 'Event Description';
@@ -103,8 +105,21 @@ describe('Event Controller', () => {
 
     describe('Delete the event', () => {
         let eventId;
+        let userId;
+        beforeEach( async()=>{
+            const user = await createUser();
+            const event = await new Event({
+                title: 'Event 1',
+                description: 'this is event 1 of  running',
+                eventType: 'running',
+                user: user._id
+            }).save();
+            userId = user._id;
+            eventId= event._id;
+
+        })
         const exec = () => {
-            return request(server).del('/event/' + eventId)
+            return request(server).del('/event/' + eventId).set('user_id', userId);
         }
         it('should return 400 if invalid event id', async () => {
             eventId = 1;
@@ -116,16 +131,20 @@ describe('Event Controller', () => {
             const res = await exec();
             expect(res.status).toBe(404)
         })
-        const saveEvent=()=>{
-            
-        }
-        it('should return 204 and delete the event. The event should send back to customer', async () => {
-            const event = await new Event({
-                title: 'Event 1',
-                description: 'this is event 1 of  running',
-                eventType: 'running'
-            }).save();
-            eventId = (await event)._id;
+
+        it('should return 400 if invalid user Id', async()=>{
+            userId=1;
+            const res= await exec();
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 401 if user Id is valid but user have not the event', async()=>{
+            userId=mongoose.Types.ObjectId();
+            const res= await exec();
+            expect(res.status).toBe(401)
+        })
+       
+        it('should return 204 and delete the event.', async () => {
             const res = await exec();
             expect(res.status).toBe(204)
             //expect(res.body).toMatchObject(event)

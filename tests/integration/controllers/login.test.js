@@ -6,12 +6,12 @@ describe('Login Controller', () => {
     const registerUser = async () => {
         email = 'test@test.com';
         password = '1234567';
-       await new User(
+        await new User(
             {
                 firstName: 'aaa',
                 lastName: 'bbb',
                 email,
-                password : await User.createPassword(password)
+                password: await User.createPassword(password)
 
             }).save();
     }

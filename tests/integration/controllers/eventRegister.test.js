@@ -51,7 +51,7 @@ describe('Event Register controller', () => {
             const event = await createEvent();
             eventId = event._id;
             user_id = user._id;
-            token =await user.generateAuthToken();
+            token = await user.generateAuthToken();
             eventDate = '2020-09-25'
         })
         const exec = () => {
@@ -60,36 +60,36 @@ describe('Event Register controller', () => {
                 .set('x-auth-token', token)
                 .send({ eventDate });
         }
-        it('Should return 401 if invalid token ',async()=>{
+        it('Should return 401 if invalid token ', async () => {
             token = '';
-             const res = await exec()
+            const res = await exec()
             expect(res.status).toBe(401)
         })
-        it('should return 400 if wrong token ', async()=>{
+        it('should return 400 if wrong token ', async () => {
             token = 'myowntokenstring';
             const res = await exec()
-           expect(res.status).toBe(400)
+            expect(res.status).toBe(400)
         })
-        it('should return 400 if generate fake token ', async()=>{
-            token = jwt.sign({_id:'1',isLogin:false}, "generate_Fake_token")
+        it('should return 400 if generate fake token ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: false }, "generate_Fake_token")
             const res = await exec()
-           expect(res.status).toBe(400)
-        })
-
-        it('should return 401 if token valid but not login ', async()=>{
-            token = jwt.sign({_id:'1',isLogin:false}, process.env.JWT_PRIVATE_KEY)
-            const res = await exec()
-           expect(res.status).toBe(401)
+            expect(res.status).toBe(400)
         })
 
-        
-        it('should return 400 if user._id is invalid ', async()=>{
-            token = jwt.sign({_id:'1',isLogin:true}, process.env.JWT_PRIVATE_KEY)
+        it('should return 401 if token valid but not login ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: false }, process.env.JWT_PRIVATE_KEY)
             const res = await exec()
-           expect(res.status).toBe(400)
+            expect(res.status).toBe(401)
+        })
+
+
+        it('should return 400 if user._id is invalid ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: true }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+            expect(res.status).toBe(400)
         })
         it('should return 404 if User is not exist', async () => {
-            token = jwt.sign({_id:mongoose.Types.ObjectId(),isLogin:true}, process.env.JWT_PRIVATE_KEY)
+            token = jwt.sign({ _id: mongoose.Types.ObjectId(), isLogin: true }, process.env.JWT_PRIVATE_KEY)
             const res = await exec();
             expect(res.status).toBe(404)
         })
@@ -100,11 +100,7 @@ describe('Event Register controller', () => {
             const res = await exec();
             expect(res.status).toBe(400)
         })
-        // it('should return 400 if invalid user ID', async () => {
-        //     user_id = 1;
-        //     const res = await exec();
-        //     expect(res.status).toBe(400)
-        // })
+
 
         it('should return 404 if event is not exist', async () => {
             eventId = mongoose.Types.ObjectId()
@@ -112,7 +108,7 @@ describe('Event Register controller', () => {
             expect(res.status).toBe(404)
         })
 
-       
+
         it('should return 400 if input is valid', async () => {
             eventDate = '2020'
             const res = await exec();
@@ -150,7 +146,7 @@ describe('Event Register controller', () => {
         })
     })
 
-   
+
     describe('Post method for Approval ', () => {
 
         let eventRegisterId;
@@ -193,9 +189,7 @@ describe('Event Register controller', () => {
             expect(res.status).toBe(200);
 
         })
-        // eventRegisterApprovedOrRejected('/eventRegister/approved/',true)
+
     })
-    // describe('Post method for Rejected ', ()=>{
-    //     eventRegisterApprovedOrRejected('/eventRegister/rejected/',false)
-    // })
+
 })

@@ -8,7 +8,7 @@ describe('RegisterController', () => {
         server = require('../../../src/server.js')
     })
     afterEach(async () => {
-    
+
         await server.close()
         await User.deleteMany({})
     })
@@ -86,8 +86,8 @@ describe('RegisterController', () => {
             await User.deleteMany({})
             const res = await exec();
             expect(res.status).toBe(200)
-            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['firstName',"id",'lastName', 'email']))
-       
+            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['firstName', "id", 'lastName', 'email']))
+
         })
     })
 

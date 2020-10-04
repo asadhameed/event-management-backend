@@ -29,7 +29,8 @@ module.exports = (app) => {
     app.post('/event',upload.single('thumbnail'),event.createEvent)
     app.delete('/event/:id',[userAuth, isLogin,headerID,paramsId], event.deletedEvent)
 
-    app.post('/eventRegister/:id',[paramsId,headerUserId],eventRegister.create)
+    //app.post('/eventRegister/:id',[paramsId,headerUserId],eventRegister.create)
+    app.post('/eventRegister/:id',[userAuth, isLogin,headerID,paramsId],eventRegister.create)
     app.get('/eventRegister/:id',paramsId,eventRegister.getEventRegister)
     app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval)
 

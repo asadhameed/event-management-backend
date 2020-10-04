@@ -13,7 +13,7 @@ module.exports = {
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors)
         const eventId = req.params.id;
-        const user_id = req.headers.user_id;
+        const user_id = req.user._id;
         const event = await Event.findById(eventId);
         if (!event) return res.status(404).send('Event is not found')
         const user = await User.findById(user_id);

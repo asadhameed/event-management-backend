@@ -19,10 +19,12 @@ module.exports = (app) => {
     app.post('/user/login', login.userLogin)
     app.post('/user/registration', registerController.createUser)
     app.get('/user/:id',paramsId, registerController.getUser)
+    app.get('/user/events' , headerUserId ,eventDashBoard.getEventsByUserID )
 
-    app.get('/event/:id',paramsId, eventDashBoard.getEventById)
+   // app.get('/event/:id',paramsId, eventDashBoard.getEventById)
     app.get('/events', eventDashBoard.getAllEvents)
     app.get('/events/:eventType' , eventDashBoard.getAllEvents)
+    app.get('/event/byuser/',headerUserId , eventDashBoard.getEventsByUserID )
 
     app.post('/event',upload.single('thumbnail'),event.createEven)
     app.delete('/event/:id',paramsId, event.deletedEvent)
@@ -31,7 +33,7 @@ module.exports = (app) => {
     app.get('/eventRegister/:id',paramsId,eventRegister.getEventRegister)
     app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval)
     //app.post('/eventRegister/rejected/:id', paramsId, eventRegister.rejected)
-
+    
     app.use('/static', express.static(path.resolve(__dirname,'..','images')))
     app.use(error)
 }

@@ -8,8 +8,9 @@ describe('RegisterController', () => {
         server = require('../../../src/server.js')
     })
     afterEach(async () => {
-        await User.deleteMany({})
+    
         await server.close()
+        await User.deleteMany({})
     })
     describe('Post Method', () => {
         let firstName;
@@ -82,9 +83,10 @@ describe('RegisterController', () => {
             expect(res.status).toBe(400)
         })
         it('should return 200 If First name, Last name, Email and Password are valid', async () => {
+            await User.deleteMany({})
             const res = await exec();
             expect(res.status).toBe(200)
-            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['firstName','lastName', 'password', 'email']))
+            expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['firstName',"id",'lastName', 'email']))
        
         })
     })

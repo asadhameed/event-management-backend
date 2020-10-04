@@ -15,4 +15,14 @@ module.exports={
         const events = await Event.find(query);
         res.send(events)
     },
+
+    async getEventsByUserID(req, res){
+        const user_id = req.headers.user_id;
+        console.log('=======================>' ,user_id)
+        const query = {user:user_id}
+        console.log('---------------------->',query)
+        const events = await Event.find(query);
+        console.log('---------------------->',events)
+        res.send(events)
+    }
 }

@@ -10,7 +10,7 @@ module.exports = {
         next();
     },
     headerUserId(req, res, next) {
-        const user_id = req.headers.user_id;
+        const user_id = req.user._id;
         if (validationID(user_id))
             return res.status(400).send('Invalid Id')
         next();

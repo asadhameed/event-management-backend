@@ -21,12 +21,5 @@ function isLogin(req, res, next) {
     next();
 }
 
-function headerID(req, res, next) {
-    
-    if (!mongoose.Types.ObjectId.isValid(req.user._id))
-       return  res.status(400).send('Invalid id')
-    next()
-}
 module.exports.userAuth = userAuth;
 module.exports.isLogin = isLogin;
-module.exports.headerID=headerID;

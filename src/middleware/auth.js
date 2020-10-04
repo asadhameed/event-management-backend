@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const mongoose =require('mongoose')
+
 require('dotenv').config();
 
 function userAuth(req, res, next) {
@@ -8,7 +8,7 @@ function userAuth(req, res, next) {
         return res.status(401).send('Access Denied')
     try {
         const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
-        
+
         req.user = decode;
         next();
     } catch (error) {

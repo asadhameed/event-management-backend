@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const eventRegisterSchema = new mongoose.Schema({
     date: String,
-    approved:  Boolean,
+    approved: Boolean,
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

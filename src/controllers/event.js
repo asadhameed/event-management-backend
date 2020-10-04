@@ -1,7 +1,9 @@
-const { check, validationResult } = require("express-validator");
 const mongoose = require("mongoose");
+const { check, validationResult } = require("express-validator");
+
 const Event = require('../models/event');
 const User = require("../models/User");
+
 module.exports = {
     async createEvent(req, res) {
         await check('title')

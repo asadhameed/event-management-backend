@@ -7,10 +7,11 @@ const registerController = require('../controllers/registerController')
 const event = require('../controllers/event')
 const eventDashBoard = require('../controllers/eventDashBoard')
 const error = require('../middleware/error');
-const { paramsId, headerUserId } = require('../middleware/objectIdvalidation')
-const { userAuth, isLogin } = require('../../src/middleware/auth')
 const login = require('../controllers/login')
 const eventRegister = require('../controllers/eventRegister')
+
+const { paramsId, headerUserId } = require('../middleware/objectIdvalidation')
+const { userAuth, isLogin } = require('../../src/middleware/auth')
 
 const uploadConfig = require('../middleware/upload');
 const upload = multer(uploadConfig)
@@ -29,7 +30,7 @@ module.exports = (app) => {
     app.post('/event', upload.single('thumbnail'), event.createEvent)
     app.delete('/event/:id', [userAuth, isLogin, headerUserId, paramsId], event.deletedEvent)
 
-  
+
     app.post('/eventRegister/:id', [userAuth, isLogin, headerUserId, paramsId], eventRegister.create)
     app.get('/eventRegister/:id', paramsId, eventRegister.getEventRegister)
     app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval)

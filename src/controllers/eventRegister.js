@@ -1,9 +1,9 @@
 const { check, validationResult } = require('express-validator');
+
 const Event = require('../models/event')
 const User = require('../models/User')
 const EventRegister = require('../models/eventRegister');
-const { get } = require('mongoose');
-const e = require('express');
+
 module.exports = {
     async create(req, res) {
         await check('eventDate')
@@ -64,7 +64,7 @@ module.exports = {
         await check('approved').isBoolean().withMessage('Wrong approved status').run(req);
         const errors = validationResult(req);
         if (!errors.isEmpty()) return res.status(400).send(errors)
-        
+
         const id = req.params.id;
         let event = await EventRegister.findById(id);
         if (!event) return res.status(404).send('Record is not found')
@@ -81,11 +81,11 @@ module.exports = {
     //         }).run(req);
     //     const errors = validationResult(req);
     //     if (!errors.isEmpty()) return res.status(400).send(errors)
-        
+
     //     const id = req.params.id;
     //     let event = await EventRegister.findById(id);
     //     if (!event) return res.status(404).send('Record is not found')
-        
+
     //     event.approved = req.body.approved;
     //     event = await event.save();
     //     res.send(event)

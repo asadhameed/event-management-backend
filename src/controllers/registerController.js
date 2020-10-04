@@ -1,6 +1,7 @@
-const User = require('../models/User')
 const { check, validationResult } = require('express-validator');
-const mongoose= require('mongoose');
+
+const User = require('../models/User')
+
 const validationInput = async (req) => {
 
     await check('firstName')
@@ -31,7 +32,6 @@ const validationInput = async (req) => {
             return true;
         }).run(req)
 
-    // return validationResult(req);
 }
 module.exports = {
     async createUser(req, res) {
@@ -41,26 +41,24 @@ module.exports = {
 
             if (!errors.isEmpty()) return res.status(400).send(errors)
             let registerUser = req.body;
-            registerUser.password= await User.createPassword(registerUser.password)
+            registerUser.password = await User.createPassword(registerUser.password)
             registerUser = await User.create(registerUser)
             return res.send({
-                firstName:registerUser.firstName,
-                lastName:registerUser.lastName,
-                id:registerUser._id,
-                email:registerUser.email
+                firstName: registerUser.firstName,
+                lastName: registerUser.lastName,
+                id: registerUser._id,
+                email: registerUser.email
             })
         } catch (error) {
             res.status(400).send(`The user is not register because of this error ${error}`)
-          //  throw new Error(`The user is not register because of this error ${error}`)
         }
     },
-    async getUser(req, res){
+    async getUser(req, res) {
         try {
-            
+
             const id = req.params.id;
-         //   if(!mongoose.Types.ObjectId.isValid(id)) return res.status(400).send('Not valid id');
             const user = await User.findById(id)
-            if(!user) return  res.status(404).send('Not exist');
+            if (!user) return res.status(404).send('Not exist');
             res.send(user)
         } catch (error) {
             res.status(400).send(`The user is not register because of this error ${error}`)

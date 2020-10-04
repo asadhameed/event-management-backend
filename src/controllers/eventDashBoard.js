@@ -1,5 +1,5 @@
 const Event = require('../models/event');
-module.exports={
+module.exports = {
     async getEventById(req, res) {
         const id = req.params.id;
         const event = await Event.findById(id)
@@ -7,14 +7,14 @@ module.exports={
         res.send(event)
     },
     async getAllEvents(req, res) {
-       const query = req.params
+        const query = req.params
         const events = await Event.find(query);
         res.send(events)
     },
 
-    async getEventsByUserID(req, res){
+    async getEventsByUserID(req, res) {
         const user_id = req.user._id;
-        const query = {user:user_id}
+        const query = { user: user_id }
         const events = await Event.find(query);
         res.send(events)
     }

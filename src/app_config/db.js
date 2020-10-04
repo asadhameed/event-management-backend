@@ -1,9 +1,9 @@
-const mongoose=require('mongoose');
+const mongoose = require('mongoose');
 
-module.exports= function(){
-    const db=process.env.MONGO_DB_CONNECTION;
-    mongoose.connect(db,{useUnifiedTopology:true, useNewUrlParser:true})
-    .then(()=>console.log(`connect with ${db}`))
-    .catch((err)=> console.log('Database error ----------------',err))
+module.exports = function () {
+    const db = process.env.MONGO_DB_CONNECTION;
+    mongoose.connect(db, { useUnifiedTopology: true, useNewUrlParser: true })
+        .then(() => console.log(`connect with ${db}`))
+        .catch((err) => console.log('Database error ----------------', err))
 }
 

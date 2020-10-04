@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const Event = require('../models/event');
 const User = require("../models/User");
 module.exports = {
-    async createEven(req, res) {
+    async createEvent(req, res) {
         await check('title')
             .trim()
             .isLength({ min: 4, max: 30 })

@@ -16,7 +16,9 @@ const { userAuth, isLogin } = require('../../src/middleware/auth')
 const uploadConfig = require('../middleware/upload');
 const upload = multer(uploadConfig)
 module.exports = (app) => {
-    app.use(cors());
+    app.use(cors({
+        exposedHeaders: ['x-auth-token'],
+      }));
     app.use(express.json())
     app.post('/user/login', login.userLogin)
     app.post('/user/registration', registerController.createUser)

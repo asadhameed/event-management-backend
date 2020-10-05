@@ -12,7 +12,7 @@ describe('Event Controller', () => {
     })
     afterEach(async () => {
         await server.close();
-        await Event.deleteMany({});
+       // await Event.deleteMany({});
         const imagesFolder = './src/images/';
         const files = await fs.promises.readdir(imagesFolder)
         files.forEach(async file => await fs.unlinkSync(imagesFolder + file))
@@ -34,10 +34,12 @@ describe('Event Controller', () => {
         let user_id;
         let eventType;
         let thumbnail;
+        let token;
 
         beforeEach(async () => {
             const user = await createUser();
-            user_id = user._id;
+            token= user.generateAuthToken();
+           
             title = 'Event Title';
             description = 'Event Description';
             price = 10;
@@ -48,13 +50,50 @@ describe('Event Controller', () => {
         const exec = () => {
             return request(server)
                 .post('/event')
-                .set('user_id', user_id)
+                .set('x-auth-token', token)
                 .attach(thumbnail, path.resolve(__dirname, 'test.png'))
                 .field('title', title)
                 .field('description', description)
                 .field('eventType', eventType)
                 .field('price', price);
         }
+
+        it('Should return 401 if invalid token ', async () => {
+            token = '';
+            const res = await exec()
+            expect(res.status).toBe(401)
+        })
+        it('should return 400 if wrong token ', async () => {
+            token = 'myowntokenstring';
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+        it('should return 400 if generate fake token ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: false }, "generate_Fake_token")
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 401 if token valid but not login ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: false }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+            expect(res.status).toBe(401)
+        })
+
+
+        it('should return 400 if user._id is invalid ', async () => {
+            token = jwt.sign({ _id: '1', isLogin: true }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 400 if user is not exist', async () => {
+            token = jwt.sign({ _id: mongoose.Types.ObjectId(), isLogin: true }, process.env.JWT_PRIVATE_KEY)
+          
+            const res = await exec();
+            expect(res.status).toBe(400)
+        })
+
         it('should return 400 If Title is less then 4 characters', async () => {
             title = 'aaa'
             const res = await exec();
@@ -66,11 +105,7 @@ describe('Event Controller', () => {
             const res = await exec();
             expect(res.status).toBe(400)
         })
-        it('should return 400 if the description is not provide', async () => {
-            description = '';
-            const res = await exec();
-            expect(res.status).toBe(400)
-        })
+     
 
         it('should return 400 if the Even Type is not provide', async () => {
             eventType = '';
@@ -85,20 +120,11 @@ describe('Event Controller', () => {
         })
 
 
-        it('should return 400 if user id is invalid', async () => {
-            user_id = 1;
-            const res = await exec();
-            expect(res.status).toBe(400)
-        })
-
-        it('should return 400 if user is not exist', async () => {
-            user_id = mongoose.Types.ObjectId()
-            const res = await exec();
-            expect(res.status).toBe(400)
-        })
+       
 
         it('should return 200 if valid input', async () => {
             const res = await exec()
+        //    console.log('--------------------------------->', res)
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user', 'eventType']))
         })

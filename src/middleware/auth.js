@@ -10,6 +10,7 @@ function userAuth(req, res, next) {
         const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
 
         req.user = decode;
+       // req.body._id=decode._id;
         next();
     } catch (error) {
         return res.status(400).send('Invalid token')

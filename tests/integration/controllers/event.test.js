@@ -12,7 +12,8 @@ describe('Event Controller', () => {
     })
     afterEach(async () => {
         await server.close();
-       // await Event.deleteMany({});
+        await Event.deleteMany({});
+        await User.deleteMany({})
         const imagesFolder = './src/images/';
         const files = await fs.promises.readdir(imagesFolder)
         files.forEach(async file => await fs.unlinkSync(imagesFolder + file))
@@ -38,8 +39,8 @@ describe('Event Controller', () => {
 
         beforeEach(async () => {
             const user = await createUser();
-            token= user.generateAuthToken();
-           
+            token = user.generateAuthToken();
+
             title = 'Event Title';
             description = 'Event Description';
             price = 10;
@@ -89,7 +90,7 @@ describe('Event Controller', () => {
 
         it('should return 400 if user is not exist', async () => {
             token = jwt.sign({ _id: mongoose.Types.ObjectId(), isLogin: true }, process.env.JWT_PRIVATE_KEY)
-          
+
             const res = await exec();
             expect(res.status).toBe(400)
         })
@@ -105,7 +106,7 @@ describe('Event Controller', () => {
             const res = await exec();
             expect(res.status).toBe(400)
         })
-     
+
 
         it('should return 400 if the Even Type is not provide', async () => {
             eventType = '';
@@ -120,11 +121,11 @@ describe('Event Controller', () => {
         })
 
 
-       
+
 
         it('should return 200 if valid input', async () => {
             const res = await exec()
-        //    console.log('--------------------------------->', res)
+            //    console.log('--------------------------------->', res)
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user', 'eventType']))
         })

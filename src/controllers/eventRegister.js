@@ -7,22 +7,21 @@ const EventRegister = require('../models/eventRegister');
 module.exports = {
     async create(req, res) {
         await check('eventDate')
-            .trim()
-            .isDate()
-            .withMessage('Must be a valid date').run(req);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).send(errors)
+        //     .trim()
+        //     .isDate()
+        //     .withMessage('Must be a valid date').run(req);
+        // const errors = validationResult(req);
+        // if (!errors.isEmpty()) return res.status(400).send(errors)
         const eventId = req.params.id;
         const user_id = req.user._id;
         const event = await Event.findById(eventId);
         if (!event) return res.status(404).send('Event is not found')
         const user = await User.findById(user_id);
         if (!user) return res.status(404).send('User is not register')
-        const date = req.body.eventDate;
+    
         let eventRegister = new EventRegister({
             user: user_id,
-            event: eventId,
-            date
+            event: eventId
         })
 
         eventRegister = await eventRegister.save();

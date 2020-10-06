@@ -35,7 +35,6 @@ describe('Event Register controller', () => {
         const user = await createUser();
         const event = await createEvent();
         return new EventRegister({
-            date: '2020-09-25',
             event: event._id,
             user: user._id,
         }).save();
@@ -44,7 +43,7 @@ describe('Event Register controller', () => {
     describe('Post Method', () => {
         let eventId;
         let user_id;
-        let eventDate;
+       
         let token;
         beforeEach(async () => {
             const user = await createUser();
@@ -52,13 +51,12 @@ describe('Event Register controller', () => {
             eventId = event._id;
             user_id = user._id;
             token = await user.generateAuthToken();
-            eventDate = '2020-09-25'
+         
         })
         const exec = () => {
             return request(server)
                 .post('/eventRegister/' + eventId)
-                .set('x-auth-token', token)
-                .send({ eventDate });
+                .set('x-auth-token', token);
         }
         it('Should return 401 if invalid token ', async () => {
             token = '';
@@ -109,11 +107,7 @@ describe('Event Register controller', () => {
         })
 
 
-        it('should return 400 if input is valid', async () => {
-            eventDate = '2020'
-            const res = await exec();
-            expect(res.status).toBe(400)
-        })
+     
         it('should return 200 if input is valid', async () => {
             const res = await exec();
             expect(res.status).toBe(200)

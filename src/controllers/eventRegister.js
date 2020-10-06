@@ -18,13 +18,19 @@ module.exports = {
         if (!event) return res.status(404).send('Event is not found')
         const user = await User.findById(user_id);
         if (!user) return res.status(404).send('User is not register')
-    
+
         let eventRegister = new EventRegister({
             user: user_id,
             event: eventId
         })
 
         eventRegister = await eventRegister.save();
+        await eventRegister.populate('event').populate('user', 'firstName lastName email').execPopulate();
+        const ownerOfEvent = req.connectUsers[eventRegister.event.user];
+
+        if (ownerOfEvent) {
+            req.io.to(ownerOfEvent).emit('eventRegistration_request', eventRegister)
+        }
         res.send(eventRegister)
     },
 

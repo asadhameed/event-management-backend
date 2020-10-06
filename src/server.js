@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const jwt= require('jsonwebtoken');
 const http = require('http');
 const socketIo = require('socket.io');
 const server = http.Server(app);
@@ -12,22 +13,29 @@ const io = socketIo(server);
  * but now i keep in the memory
  */
 
-const connectUser = {}
+const connectUsers = {}
 
 io.on('connection', socket => {
 
     if (socket.handshake.query.token !== 'null') {
-        console.log(socket.handshake.query)
-        console.log('User connecting with ', socket.id);
+    //    console.log(socket.handshake.query)
+     //   console.log('User connecting with ', socket.id);
         const { token } = socket.handshake.query;
-        connectUser[token] = socket.id;
+       // connectUsers[token] = socket.id;
+        try {
+            const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
+            connectUsers[decode._id] = socket.id;
+          
+        } catch (error) {
+            console.log(' error', error)
+        }
     }
 
 })
 
 app.use((req, res, next)=>{
     req.io=io;
-    req.connectUser=connectUser;
+    req.connectUsers=connectUsers;
     next()
 })
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const jwt= require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const http = require('http');
 const socketIo = require('socket.io');
 const server = http.Server(app);
@@ -18,14 +18,11 @@ const connectUsers = {}
 io.on('connection', socket => {
 
     if (socket.handshake.query.token !== 'null') {
-    //    console.log(socket.handshake.query)
-     //   console.log('User connecting with ', socket.id);
         const { token } = socket.handshake.query;
-       // connectUsers[token] = socket.id;
         try {
             const decode = jwt.verify(token, process.env.JWT_PRIVATE_KEY);
             connectUsers[decode._id] = socket.id;
-          
+
         } catch (error) {
             console.log(' error', error)
         }
@@ -33,9 +30,9 @@ io.on('connection', socket => {
 
 })
 
-app.use((req, res, next)=>{
-    req.io=io;
-    req.connectUsers=connectUsers;
+app.use((req, res, next) => {
+    req.io = io;
+    req.connectUsers = connectUsers;
     next()
 })
 

@@ -6,6 +6,8 @@ const Event = require('../../../src/models/event');
 const EventRegister = require('../../../src/models/eventRegister')
 let server;
 describe('Event Register controller', () => {
+    let existUser;
+    let existEvent;
     beforeEach(() => {
         server = require('../../../src/server');
     })
@@ -32,24 +34,24 @@ describe('Event Register controller', () => {
     }
 
     const createEventRegister = async () => {
-        const user = await createUser();
-        const event = await createEvent();
+        if (!existUser) existUser = await createUser();
+        if (!existEvent) existEvent = await createEvent();
         return new EventRegister({
-            event: event._id,
-            user: user._id,
+            event: existEvent._id,
+            user: existUser._id,
         }).save();
     }
 
     describe('Post Method', () => {
         let eventId;
-        let user_id;
+        //let user_id;
 
         let token;
         beforeEach(async () => {
             const user = await createUser();
             const event = await createEvent();
             eventId = event._id;
-            user_id = user._id;
+            //  user_id = user._id;
             token = await user.generateAuthToken();
 
         })
@@ -148,7 +150,7 @@ describe('Event Register controller', () => {
         beforeEach(async () => {
             const eventRegister = await createEventRegister();
             eventRegisterId = eventRegister._id;
-            url ='/eventRegister/approved/'
+            url = '/eventRegister/approved/'
         })
         const exec = () => {
             return request(server).post(url + eventRegisterId);
@@ -173,19 +175,66 @@ describe('Event Register controller', () => {
         })
 
         it('Should return 200 and eventRegister information if input is valid and rejected', async () => {
-            url ='/eventRegister/rejected/'
+            url = '/eventRegister/rejected/'
             const res = await exec();
             expect(res.body).toHaveProperty('approved', false)
             expect(res.status).toBe(200);
 
         })
-        // it('Should return 200 and eventRegister information if input is valid and rejected', async () => {
-        //     approved = false;
-        //     const res = await exec();
-        //     expect(res.body).toHaveProperty('approved', false)
-        //     expect(res.status).toBe(200);
+    })
 
-        // })
+    describe('Get EventsRegister (AllEventsRegister)', () => {
+        let token;
+        beforeEach(async () => {
+            await createEventRegister();
+            await createEventRegister();
+            token = await existUser.generateAuthToken();
+        })
+        const exec = () => {
+            return request(server).get('/eventsRegister').set('x-auth-token', token);
+        }
+        it('Should return 401 if invalid token ', async () => {
+            token = '';
+            const res = await exec()
+            expect(res.status).toBe(401)
+        })
+        it('should return 400 if wrong token ', async () => {
+            token = 'myowntokenstring';
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+        it('should return 400 if generate fake token ', async () => {
+            token = await jwt.sign({ _id: '1', isLogin: false }, "generate_Fake_token")
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+
+        it('should return 401 if token valid but not login ', async () => {
+            token = await jwt.sign({ _id: '1', isLogin: false }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+            expect(res.status).toBe(401)
+        })
+
+
+        it('should return 400 if user._id is invalid ', async () => {
+            token = await jwt.sign({ _id: '1', isLogin: true }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec()
+            expect(res.status).toBe(400)
+        })
+        it('should return 200 and empty body if User have not register any event  ', async () => {
+            token = await jwt.sign({ _id: mongoose.Types.ObjectId(), isLogin: true }, process.env.JWT_PRIVATE_KEY)
+            const res = await exec();
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(0)
+        })
+
+        it('should return 200 and list of register event body if User have register the events  ', async () => {
+            const res = await exec();
+            expect(res.status).toBe(200)
+            expect(res.body.length).toBe(2)
+        })
+
+
 
     })
 

@@ -1,5 +1,3 @@
-const { check, validationResult } = require('express-validator');
-
 const Event = require('../models/event')
 const User = require('../models/User')
 const EventRegister = require('../models/eventRegister');
@@ -16,6 +14,7 @@ module.exports = {
 
         let eventRegister = new EventRegister({
             user: user_id,
+            userCreateEvent: event.user,
             event: eventId
         })
 
@@ -55,19 +54,23 @@ module.exports = {
         if (!event) return res.status(404).send('Record is not found')
         res.send(event)
     },
-    async forApproval(req, res){
-        res.send('ok')
-    },
+
     async approval(req, res) {
         const path = req.route.path;
-        const status = path.includes('approved') ? true :false;
-    
+        const status = path.includes('approved') ? true : false;
+
         const id = req.params.id;
         let event = await EventRegister.findById(id);
         if (!event) return res.status(404).send('Record is not found')
 
-         event.approved = status;
-         event = await event.save();
+        event.approved = status;
+        event = await event.save();
         res.send(event)
+    },
+
+    async getAllEventsRegister(req, res) {
+        const user_id = req.user._id;
+        const eventRegister = await EventRegister.find({ user: user_id })
+        res.send(eventRegister)
     }
 }

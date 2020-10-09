@@ -35,7 +35,9 @@ module.exports = (app) => {
 
     app.post('/eventRegister/:id', [userAuth, isLogin, headerUserId, paramsId], eventRegister.create);
     app.get('/eventRegister/:id', paramsId, eventRegister.getEventRegister);
-    app.post('/eventRegister/approval/:id', paramsId, eventRegister.approval);
+    //app.get('/eventRegister/waiting-for-approval/' [userAuth, isLogin, headerUserId],eventRegister.forApproval)
+    app.post('/eventRegister/approved/:id', paramsId, eventRegister.approval);
+    app.post('/eventRegister/rejected/:id',paramsId, eventRegister.approval)
 
 
     app.use('/static', express.static(path.resolve(__dirname, '..', 'images')));

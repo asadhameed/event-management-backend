@@ -4,14 +4,9 @@ const Event = require('../models/event')
 const User = require('../models/User')
 const EventRegister = require('../models/eventRegister');
 
+
 module.exports = {
     async create(req, res) {
-        await check('eventDate')
-        //     .trim()
-        //     .isDate()
-        //     .withMessage('Must be a valid date').run(req);
-        // const errors = validationResult(req);
-        // if (!errors.isEmpty()) return res.status(400).send(errors)
         const eventId = req.params.id;
         const user_id = req.user._id;
         const event = await Event.findById(eventId);
@@ -60,39 +55,19 @@ module.exports = {
         if (!event) return res.status(404).send('Record is not found')
         res.send(event)
     },
+    async forApproval(req, res){
+        res.send('ok')
+    },
     async approval(req, res) {
-        // await check('approved').isBoolean()
-        //     .custom((value) => {
-        //         if (!value) throw new Error("Bad parameter")
-        //         return true;
-        //     }).run(req);
-        await check('approved').isBoolean().withMessage('Wrong approved status').run(req);
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) return res.status(400).send(errors)
-
+        const path = req.route.path;
+        const status = path.includes('approved') ? true :false;
+    
         const id = req.params.id;
         let event = await EventRegister.findById(id);
         if (!event) return res.status(404).send('Record is not found')
 
-        event.approved = req.body.approved;
-        event = await event.save();
+         event.approved = status;
+         event = await event.save();
         res.send(event)
-    },
-    // async rejected(req, res) {
-    //     await check('approved').isBoolean()
-    //         .custom((value) => {
-    //             if (value) throw new Error("Bad parameter")
-    //             return true;
-    //         }).run(req);
-    //     const errors = validationResult(req);
-    //     if (!errors.isEmpty()) return res.status(400).send(errors)
-
-    //     const id = req.params.id;
-    //     let event = await EventRegister.findById(id);
-    //     if (!event) return res.status(404).send('Record is not found')
-
-    //     event.approved = req.body.approved;
-    //     event = await event.save();
-    //     res.send(event)
-    // }
+    }
 }

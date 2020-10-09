@@ -43,7 +43,7 @@ describe('Event Register controller', () => {
     describe('Post Method', () => {
         let eventId;
         let user_id;
-       
+
         let token;
         beforeEach(async () => {
             const user = await createUser();
@@ -51,7 +51,7 @@ describe('Event Register controller', () => {
             eventId = event._id;
             user_id = user._id;
             token = await user.generateAuthToken();
-         
+
         })
         const exec = () => {
             return request(server)
@@ -107,7 +107,7 @@ describe('Event Register controller', () => {
         })
 
 
-     
+
         it('should return 200 if input is valid', async () => {
             const res = await exec();
             expect(res.status).toBe(200)
@@ -144,20 +144,15 @@ describe('Event Register controller', () => {
     describe('Post method for Approval ', () => {
 
         let eventRegisterId;
-        let approved;
+        let url;
         beforeEach(async () => {
             const eventRegister = await createEventRegister();
             eventRegisterId = eventRegister._id;
-            approved = true;
+            url ='/eventRegister/approved/'
         })
         const exec = () => {
-            return request(server).post('/eventRegister/approval/' + eventRegisterId).send({ approved });
+            return request(server).post(url + eventRegisterId);
         }
-        it('should return 400 if eventRegister filed approved is not provided', async () => {
-            approved = 'tre'
-            const res = await exec();
-            expect(res.status).toBe(400);
-        })
 
         it('Should return 400 if eventRegister is invalid ', async () => {
             eventRegisterId = 1;
@@ -176,13 +171,21 @@ describe('Event Register controller', () => {
             expect(res.status).toBe(200);
 
         })
+
         it('Should return 200 and eventRegister information if input is valid and rejected', async () => {
-            approved = false;
+            url ='/eventRegister/rejected/'
             const res = await exec();
             expect(res.body).toHaveProperty('approved', false)
             expect(res.status).toBe(200);
 
         })
+        // it('Should return 200 and eventRegister information if input is valid and rejected', async () => {
+        //     approved = false;
+        //     const res = await exec();
+        //     expect(res.body).toHaveProperty('approved', false)
+        //     expect(res.status).toBe(200);
+
+        // })
 
     })
 

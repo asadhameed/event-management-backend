@@ -13,10 +13,6 @@ const io = socketIo(server);
  * but now i keep in the memory
  */
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
 const connectUsers = {}
 
 io.on('connection', socket => {

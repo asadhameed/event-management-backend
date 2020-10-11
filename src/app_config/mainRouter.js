@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const multer = require('multer');
 const cors = require('cors');
+const bodyParse=require('body-parser')
 
 const registerController = require('../controllers/registerController');
 const event = require('../controllers/event');
@@ -20,7 +21,11 @@ module.exports = (app) => {
     exposedHeaders: ['x-auth-token'],
   }));
   
- 
+  app.use(bodyParse.urlencoded({extended:true}))
+  app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
   app.use(express.json());
   app.use(bodyParse.urlencoded({extended:true}))
  

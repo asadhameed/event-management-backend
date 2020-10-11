@@ -23,10 +23,7 @@ module.exports = (app) => {
  
   app.use(express.json());
   app.use(bodyParse.urlencoded({extended:true}))
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-  });
+ 
   app.post('/user/login', login.userLogin);
   app.post('/user/registration', registerController.createUser);
   app.get('/user/:id', paramsId, registerController.getUser);

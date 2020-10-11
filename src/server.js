@@ -13,6 +13,10 @@ const io = socketIo(server);
  * but now i keep in the memory
  */
 
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    next();
+  });
 const connectUsers = {}
 
 io.on('connection', socket => {
@@ -35,6 +39,7 @@ app.use((req, res, next) => {
     req.connectUsers = connectUsers;
     next()
 })
+
 
 require('./app_config/defineEnv')();
 require('./app_config/mainRouter')(app);

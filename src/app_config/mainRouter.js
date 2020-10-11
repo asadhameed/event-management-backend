@@ -38,7 +38,7 @@ module.exports = (app) => {
   app.get('/events/:eventType', eventDashBoard.getAllEvents);
   app.get('/event/byuser/', [userAuth, isLogin, headerUserId], eventDashBoard.getEventsByUserID);
 
-  app.post('/event', [userAuth, isLogin, headerUserId], upload.single('thumbnail'), event.createEvent);
+  app.post('/event', [userAuth, isLogin, headerUserId], event.createEvent);
   app.delete('/event/:id', [userAuth, isLogin, headerUserId, paramsId], event.deletedEvent);
 
 

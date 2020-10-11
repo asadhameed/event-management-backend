@@ -16,7 +16,7 @@ const eventSchema = new mongoose.Schema({
     }
 })
 eventSchema.virtual('thumbnail_url').get(function () {
-    return 'http://localhost:8000/static/' + this.thumbnail;
+    return 'https://sport-event-api.herokuapp.com/static/' + this.thumbnail;
 })
 const Event = mongoose.model('Event', eventSchema)
 module.exports = Event;

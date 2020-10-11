@@ -48,7 +48,7 @@ module.exports = (app) => {
   app.post('/eventRegister/rejected/:id', paramsId, eventRegister.approval)
 
   app.get('/eventsRegister', [userAuth, isLogin, headerUserId], eventRegister.getAllEventsRegister)
-
+  app.get('/eventsSubscribed', [userAuth, isLogin, headerUserId], eventRegister.getAllSubscribedEvents)
 
 
   app.use('/static', express.static(path.resolve(__dirname, '..', 'images')));

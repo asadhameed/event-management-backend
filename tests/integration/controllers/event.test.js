@@ -52,11 +52,17 @@ describe('Event Controller', () => {
             return request(server)
                 .post('/event')
                 .set('x-auth-token', token)
-                .attach(thumbnail, path.resolve(__dirname, 'test.png'))
-                .field('title', title)
-                .field('description', description)
-                .field('eventType', eventType)
-                .field('price', price);
+                .send({
+                    title,
+                    price,
+                    description,
+                    eventType
+                })
+                // .attach(thumbnail, path.resolve(__dirname, 'test.png'))
+                // .field('title', title)
+                // .field('description', description)
+                // .field('eventType', eventType)
+                // .field('price', price);
         }
 
         it('Should return 401 if invalid token ', async () => {
@@ -125,7 +131,6 @@ describe('Event Controller', () => {
 
         it('should return 200 if valid input', async () => {
             const res = await exec()
-            //    console.log('--------------------------------->', res)
             expect(res.status).toBe(200)
             expect(Object.keys(res.body)).toEqual(expect.arrayContaining(['title', 'description', 'price', 'user', 'eventType']))
         })

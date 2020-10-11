@@ -7,7 +7,7 @@ const eventRegisterSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    userCreateEvent: {
+    owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },

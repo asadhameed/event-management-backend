@@ -39,6 +39,7 @@ describe('Event Register controller', () => {
         return new EventRegister({
             event: existEvent._id,
             user: existUser._id,
+            owner:existUser._id
         }).save();
     }
 

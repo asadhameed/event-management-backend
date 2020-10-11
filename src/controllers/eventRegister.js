@@ -14,7 +14,7 @@ module.exports = {
 
         let eventRegister = new EventRegister({
             user: user_id,
-            userCreateEvent: event.user,
+            owner: event.user,
             event: eventId
         })
 
@@ -70,7 +70,7 @@ module.exports = {
 
     async getAllEventsRegister(req, res) {
         const user_id = req.user._id;
-        const eventRegister = await EventRegister.find({ userCreateEvent: user_id })
+        const eventRegister = await EventRegister.find({ owner: user_id })
             .populate('event', 'title date eventType price -_id')
             .populate('user', 'firstName lastName email ')
         res.send(eventRegister)

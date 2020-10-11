@@ -28,7 +28,7 @@ module.exports = {
         if (!errors.isEmpty()) return res.status(400).send(errors);
         const { title, description, price,eventType} = req.body;
         const user = req.user._id;
-        const thumbnail = req.file.filename;
+        const thumbnail = 'temp';
         let event = new Event({
             title,
             description,

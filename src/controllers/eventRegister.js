@@ -70,7 +70,9 @@ module.exports = {
 
     async getAllEventsRegister(req, res) {
         const user_id = req.user._id;
-        const eventRegister = await EventRegister.find({ user: user_id })
+        const eventRegister = await EventRegister.find({ userCreateEvent: user_id })
+            .populate('event', 'title date eventType price -_id')
+            .populate('user', 'firstName lastName email ')
         res.send(eventRegister)
     }
 }

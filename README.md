@@ -46,12 +46,12 @@ This command will install all the dependency packages in the node_modules direct
 ### `npm run dev`
 
 Runs the app in the development mode with nodemon.<br />
-Open [http://localhost:8000](http://localhost:8000) to view it in the browser.
+Call the API with [http://localhost:8000](http://localhost:8000).
 
 ### `npm start`
 
 Runs the app in the production mode.<br />
-Open [http://localhost:8000](http://localhost:8000) to view it in the browser.
+Call the API with [http://localhost:8000](http://localhost:8000).
 
 ### `npm test`
 

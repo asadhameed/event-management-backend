@@ -31,6 +31,10 @@ First, create a .env file in the project directory. Gives your own value for the
 - MONGO_DB_CONNECTION="mongodb://localhost/your_database"
 - JWT_PRIVATE_KEY="Define_your_key"
 
+Open the .env.test file in the project directory and change the MONGO_DB_CONNECTION variable
+
+- MONGO_DB_CONNECTION="mongodb://localhost/your_test_database"
+
 ## Available Scripts
 
 In the project directory, you can run:

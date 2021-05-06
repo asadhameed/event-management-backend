@@ -1,21 +1,30 @@
 # Project Description
 
-This is the back-end API for event management. The API is developed in (Express and Nodejs). MongoDB is used as a database.
+Back-end API for event management. The API is developed in (Express, Nodejs and MongoDB). <br>
+The API have different endpoints:
 
-<strong> User end Point </strong>
+- User login/registration
+- User can create and delete an event,
+- User can filters(running, walking, swimming) the events.
+- Hashing technique used to secure password.
+
+<strong> The User Registration and Authentication API</strong> <br>
+User registration/SingUp have some constraints e.g. valid Email, Password has min 6 and max 20 characters.
 
 - post('/user/login');
 - post('/user/registration');
 - get('/user/:id');
 
-<strong> Event end point</strong>
+<strong> Event API</strong> <br>
+Login user have some constraints e.g. Event title has min 4 and max 30 characters, Price should greater then zero
 
 - get('/events');
 - get('/events/:eventType');
 - post('/event');
 - delete('/event/:id');
 
-<strong> Event Register End point </strong>
+<strong> Event Register API</strong> <br>
+User can subscribe to the event. When the user will subscribe the event admin can reject or accept that event.
 
 - post('/eventRegister/:id');
 - get('/eventRegister/:id');
@@ -56,3 +65,5 @@ Call the API with [http://localhost:8000](http://localhost:8000).
 ### `npm test`
 
 Runs the test and shows the test result. The result shows how many Test suites, how many tests are passed and how many tests are failed.<br />
+
+### Open [Front-End Code](https://github.com/asadhameed/event-management-frontend)
